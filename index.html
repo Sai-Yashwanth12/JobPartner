@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JobPartner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #2e2e2e;
+      color: #fff;
+      transition: background 0.4s, color 0.4s;
+    }
+    .container {
+      display: grid;
+      grid-template-areas:
+        "header header header"
+        "sidebar-left main sidebar-right"
+        "footer footer footer";
+      grid-template-columns: minmax(220px, 22%) 1fr minmax(220px, 22%);
+      gap: 20px;
+      padding: 20px;
+      height: 100vh;
+    }
+    @media (max-width: 768px) {
+      .container {
+        grid-template-areas:
+          "header"
+          "sidebar-left"
+          "main"
+          "sidebar-right"
+          "footer";
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .header {
+      grid-area: header;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: #222;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-radius: 10px;
+    }
+    .branding {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8em;
+      color: #ffffff;
+      letter-spacing: 2px;
+    }
+    .header a, .header button {
+      color: #000;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 8px 18px;
+      border: 2px solid #fff;
+      border-radius: 25px;
+      margin-left: 10px;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .header a:hover, .header button:hover {
+      background: #ddd;
+    }
+
+    .sidebar-left, .sidebar-right {
+      background: #111;
+      padding: 20px;
+      overflow-y: auto;
+      border-radius: 10px;
+    }
+    .main-content {
+      grid-area: main;
+      padding: 30px 40px;
+      overflow-y: auto;
+      background: #111;
+      border-radius: 10px;
+    }
+
+    .search-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    .search-bar input {
+      padding: 10px;
+      flex: 1;
+      border: 2px solid #fff;
+      border-radius: 25px;
+      background: #222;
+      color: #fff;
+      outline: none;
+    }
+    .search-bar button {
+      padding: 10px 20px;
+      border: 2px solid #fff;
+      border-radius: 25px;
+      background: #fff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .search-bar button:hover {
+      background: #ddd;
+    }
+
+    .section-toggle, .toggle-tips {
+      padding: 14px 12px;
+      background: #1a1a1a;
+      border-radius: 25px;
+      margin: 12px 0;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.3s;
+    }
+    .section-toggle:hover, .toggle-tips:hover {
+      background: #333;
+    }
+
+    .post-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      margin-top: 20px;
+    }
+
+    .post-card, .job-card, .review-card, .notice-card {
+      background: #1f1f1f;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .post-card:hover, .job-card:hover, .review-card:hover, .notice-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+    .post-card h2, .job-card h3, .review-card h3, .notice-card h3 {
+      margin-bottom: 15px;
+      color: #fff;
+    }
+    .post-card p, .job-card p, .review-card p, .notice-card p {
+      margin-bottom: 10px;
+      line-height: 1.6;
+      color: #ccc;
+    }
+    .post-card button, .job-card button, .review-card button, .notice-card button, .sidebar-right button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      border: 2px solid #fff;
+      border-radius: 25px;
+      background: #fff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .post-card button:hover, .job-card button:hover, .review-card button:hover, .notice-card button:hover, .sidebar-right button:hover {
+      background: #ddd;
+    }
+
+    .post-feed .post-card:not(:last-child) {
+      margin-bottom: 30px;
+    }
+
+    .signin-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .signin-box {
+      background: #1f1f1f;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+      width: 300px;
+      gap: 15px;
+      color: #fff;
+      position: relative;
+    }
+
+    .signin-box input {
+      padding: 10px;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      background: #222;
+      color: #fff;
+      outline: none;
+    }
+
+    .signin-box button {
+      padding: 10px;
+      border-radius: 25px;
+      border: 2px solid #fff;
+      background: #fff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .signin-box button:hover {
+      background: #ddd;
+    }
+
+    .signin-box .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #aaa;
+    }
+    .signin-box .close-btn:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="branding">JobPartner</div>
+      <div>
+        <a href="#">For Employers</a>
+        <button onclick="toggleSignIn()">Sign In</button>
+      </div>
+    </div>
+
+    <div class="sidebar-left">
+      <div class="search-bar">
+        <input type="text" placeholder="Search jobs...">
+        <input type="text" placeholder="Location">
+        <button>Filters</button>
+      </div>
+      <div class="section-toggle" onclick="toggleSection('latest')">Latest Opportunities</div>
+      <div class="section-toggle" onclick="toggleSection('featured')">Featured Jobs</div>
+      <div class="section-toggle" onclick="toggleSection('reviews')">Company Reviews</div>
+      <div class="section-toggle" onclick="toggleSection('remote')">Remote Jobs</div>
+      <div class="section-toggle" onclick="toggleSection('parttime')">Part-Time Jobs</div>
+      <div class="section-toggle" onclick="toggleSection('freelance')">Freelance Opportunities</div>
+      <div class="section-toggle" onclick="toggleSection('entry')">Entry-Level Roles</div>
+      <div class="section-toggle" onclick="toggleSection('senior')">Senior Positions</div>
+    </div>
+
+    <div class="main-content">
+      <div id="latest" class="post-feed">
+        <div class="job-card">
+          <h3>UI/UX Designer</h3>
+          <p>DesignIt - Remote | $70,000/year | Full-time</p>
+          <button>Apply</button>
+        </div>
+        <div class="job-card">
+          <h3>Full Stack Intern</h3>
+          <p>CodeNation - Bengaluru | ₹25,000/month | 6 months</p>
+          <button>Apply</button>
+        </div>
+      </div>
+      <div id="featured" class="post-feed" style="display: none">
+        <div class="job-card">
+          <h3>Data Analyst</h3>
+          <p>Insightify - Mumbai | ₹10 LPA | Full-time</p>
+          <button>Apply</button>
+        </div>
+      </div>
+      <div id="reviews" class="post-feed" style="display: none">
+        <div class="review-card">
+          <h3>Growlytics</h3>
+          <p>4.8/5 - Collaborative environment and flexible hours.</p>
+          <button>Read More</button>
+        </div>
+      </div>
+      <div id="remote" class="post-feed" style="display: none">
+        <div class="job-card">
+          <h3>Remote Flutter Developer</h3>
+          <p>AppNova - Remote | ₹45,000/month | 4 months</p>
+          <button>Apply</button>
+        </div>
+      </div>
+      <div id="parttime" class="post-feed" style="display: none">
+        <div class="job-card">
+          <h3>Content Editor</h3>
+          <p>WriteBuzz - Hyderabad | ₹500/hour | Flexible</p>
+          <button>Apply</button>
+        </div>
+      </div>
+      <div id="freelance" class="post-feed" style="display: none">
+        <div class="job-card">
+          <h3>Freelance Illustrator</h3>
+          <p>SketchLab - Remote | ₹15,000/project | Freelance</p>
+          <button>Apply</button>
+        </div>
+      </div>
+      <div id="entry" class="post-feed" style="display: none">
+        <div class="job-card">
+          <h3>Technical Support Intern</h3>
+          <p>InnoTech - Pune | ₹12,000/month | 3 months</p>
+          <button>Apply</button>
+        </div>
+      </div>
+      <div id="senior" class="post-feed" style="display: none">
+        <div class="job-card">
+          <h3>Senior Backend Engineer</h3>
+          <p>ByteCraft - Bengaluru | ₹35 LPA | Full-time</p>
+          <button>Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-right">
+      <h3>Followed Accounts</h3>
+      <div>
+        <p>@DevHub <button>Unfollow</button></p>
+        <p>@RemoteJobsIndia <button>Unfollow</button></p>
+        <p>@StartupHire <button>Unfollow</button></p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>© 2025 JobPartner. All rights reserved.</p>
+    </div>
+  </div>
+
+  <div class="signin-modal" id="signinModal">
+    <div class="signin-box">
+      <span class="close-btn" onclick="toggleSignIn()">&times;</span>
+      <h2>Sign In</h2>
+      <input type="email" placeholder="Email">
+      <input type="password" placeholder="Password">
+      <button onclick="fakeSignIn()">Submit</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleSection(id) {
+      document.querySelectorAll('.post-feed').forEach(section => section.style.display = 'none');
+      document.getElementById(id).style.display = 'flex';
+    }
+    function toggleSignIn() {
+      const modal = document.getElementById('signinModal');
+      modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    }
+    function fakeSignIn() {
+      alert("Signed in successfully (mock)");
+      toggleSignIn();
+    }
+  </script>
+</body>
+</html>
